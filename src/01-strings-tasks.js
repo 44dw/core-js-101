@@ -207,13 +207,14 @@ function getRectangleString(width, height) {
   const leftBottomAngle = '└';
   const rightTopAngle = '┐';
   const rightBottomAngle = '┘';
-  const horizontalBorder = '─'
+  const horizontalBorder = '─';
   const verticalBorder = '│';
   const linebreak = '\n';
+  const middleWidth = width - 2;
 
   function drawHorizontal(leftAngle, rightAngle, lines) {
     let result = leftAngle;
-    for (let i=0; i<lines; i++) {
+    for (let i = 0; i < lines; i += 1) {
       result += horizontalBorder;
     }
     return result + rightAngle + linebreak;
@@ -221,21 +222,27 @@ function getRectangleString(width, height) {
 
   function drawWithGaps(lines) {
     let result = verticalBorder;
-    for (let i=0; i<lines; i++) {
+    for (let i = 0; i < lines; i += 1) {
       result += ' ';
     }
     return result + verticalBorder + linebreak;
   }
 
-  for (let i=0; i<width; i++) {
-    if (i == 0) {
-      drawHorizontal(leftTopAngle, rightTopAngle, width - 2);
-    }
+  let result = '';
 
-    if (i == width - 1) {
-      drawHorizontal(leftBottomAngle, rightBottomAngle, widti - 2);
+  for (let i = 0; i < height; i += 1) {
+    let line;
+    if (i === 0) {
+      line = drawHorizontal(leftTopAngle, rightTopAngle, middleWidth);
+    } else if (i === height - 1) {
+      line = drawHorizontal(leftBottomAngle, rightBottomAngle, middleWidth);
+    } else {
+      line = drawWithGaps(middleWidth);
     }
+    result += line;
   }
+
+  return result;
 }
 
 
@@ -255,8 +262,32 @@ function getRectangleString(width, height) {
  *    => 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm'
  *
  */
-function encodeToRot13(/* str */) {
-  throw new Error('Not implemented');
+function encodeToRot13(str) {
+  const SHIFT = 13;
+
+  function isUpperCase(s) {
+    return s.toUpperCase() === s;
+  }
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+  let result = '';
+  str.split('').forEach((s) => {
+    const index = alphabet.indexOf(s.toLowerCase());
+    if (index >= 0) {
+      let newSymbol;
+      const newSymbolIndex = index + SHIFT;
+      if (newSymbolIndex < alphabet.length) {
+        newSymbol = alphabet[newSymbolIndex];
+      } else {
+        const toAlphabetEndIndex = alphabet.length - index;
+        const reminderIndex = SHIFT - toAlphabetEndIndex;
+        newSymbol = alphabet[reminderIndex];
+      }
+      result += (isUpperCase(s) ? newSymbol.toUpperCase() : newSymbol);
+    } else {
+      result += s;
+    }
+  });
+  return result;
 }
 
 /**
@@ -272,8 +303,8 @@ function encodeToRot13(/* str */) {
  *   isString('test') => true
  *   isString(new String('test')) => true
  */
-function isString(/* value */) {
-  throw new Error('Not implemented');
+function isString(value) {
+  return typeof value === 'string' || value instanceof String;
 }
 
 
@@ -301,8 +332,17 @@ function isString(/* value */) {
  *   'Q♠' => 50
  *   'K♠' => 51
  */
-function getCardId(/* value */) {
-  throw new Error('Not implemented');
+function getCardId(value) {
+  const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+  const signs = ['♣', '♦', '♥', '♠'];
+
+  const sign = value[value.length - 1];
+  const signIndex = signs.indexOf(sign);
+  const modificator = signIndex * values.length;
+  const valueWithoutSign = value.substring(0, value.length - 1);
+  const valueIndex = values.indexOf(valueWithoutSign);
+
+  return valueIndex + modificator;
 }
 
 
