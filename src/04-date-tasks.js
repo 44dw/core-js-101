@@ -19,8 +19,8 @@
  *    'Tue, 26 Jan 2016 13:48:02 GMT' => Date()
  *    'Sun, 17 May 1998 03:00:00 GMT+01' => Date()
  */
-function parseDataFromRfc2822(/* value */) {
-  throw new Error('Not implemented');
+function parseDataFromRfc2822(value) {
+  return new Date(value);
 }
 
 /**
@@ -34,8 +34,8 @@ function parseDataFromRfc2822(/* value */) {
  *    '2016-01-19T16:07:37+00:00'    => Date()
  *    '2016-01-19T08:07:37Z' => Date()
  */
-function parseDataFromIso8601(/* value */) {
-  throw new Error('Not implemented');
+function parseDataFromIso8601(value) {
+  return new Date(value);
 }
 
 
@@ -53,8 +53,18 @@ function parseDataFromIso8601(/* value */) {
  *    Date(2012,1,1)    => true
  *    Date(2015,1,1)    => false
  */
-function isLeapYear(/* date */) {
-  throw new Error('Not implemented');
+function isLeapYear(date) {
+  const year = date.getFullYear();
+  if (!(year % 4 === 0)) {
+    return false;
+  }
+  if (!(year % 100 === 0)) {
+    return true;
+  }
+  if (!(year % 400 === 0)) {
+    return false;
+  }
+  return true;
 }
 
 
@@ -73,10 +83,29 @@ function isLeapYear(/* date */) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,10,0,0,250)     => "00:00:00.250"
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
-function timeSpanToString(/* startDate, endDate */) {
-  throw new Error('Not implemented');
-}
+function timeSpanToString(startDate, endDate) {
+  function addZeros(number, amountToAdd) {
+    let result = String(number);
+    for (let i = 0; i < amountToAdd; i += 1) {
+      result = `0${result}`;
+    }
+    return result;
+  }
 
+  const diff = Math.abs(startDate - endDate);
+
+  let milliseconds = (diff % 1000);
+  let seconds = Math.floor((diff / 1000) % 60);
+  let minutes = Math.floor((diff / (1000 * 60)) % 60);
+  let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+
+  hours = (hours < 10) ? addZeros(hours, 1) : hours;
+  minutes = (minutes < 10) ? addZeros(minutes, 1) : minutes;
+  seconds = (seconds < 10) ? addZeros(seconds, 1) : seconds;
+  milliseconds = (milliseconds < 100) ? addZeros(milliseconds, 2) : milliseconds;
+
+  return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+}
 
 /**
  * Returns the angle (in radians) between the hands of an analog clock
