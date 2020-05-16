@@ -27,8 +27,15 @@
  *  21 => 'Fizz'
  *
  */
-function getFizzBuzz(/* num */) {
-  throw new Error('Not implemented');
+function getFizzBuzz(num) {
+  let result = '';
+  if (num % 3 === 0) {
+    result += 'Fizz';
+  }
+  if (num % 5 === 0) {
+    result += 'Buzz';
+  }
+  return result.length ? result : num;
 }
 
 
@@ -43,8 +50,8 @@ function getFizzBuzz(/* num */) {
  *   5  => 120
  *   10 => 3628800
  */
-function getFactorial(/* n */) {
-  throw new Error('Not implemented');
+function getFactorial(n) {
+  return (n === 1) ? n : n * getFactorial(n - 1);
 }
 
 
@@ -60,8 +67,12 @@ function getFactorial(/* n */) {
  *   5,10  =>  45 ( = 5+6+7+8+9+10 )
  *   -1,1  =>  0  ( = -1 + 0 + 1 )
  */
-function getSumBetweenNumbers(/* n1, n2 */) {
-  throw new Error('Not implemented');
+function getSumBetweenNumbers(n1, n2) {
+  let result = 0;
+  for (let i = n1; i <= n2; i += 1) {
+    result += i;
+  }
+  return result;
 }
 
 
@@ -80,8 +91,8 @@ function getSumBetweenNumbers(/* n1, n2 */) {
  *   10,1,1   =>  false
  *   10,10,10 =>  true
  */
-function isTriangle(/* a, b, c */) {
-  throw new Error('Not implemented');
+function isTriangle(a, b, c) {
+  return a + b > c && a + c > b && c + b > a;
 }
 
 
@@ -164,10 +175,12 @@ function isInsideCircle(/* circle, point */) {
  *   'abracadabra'  => 'c'
  *   'entente' => null
  */
-function findFirstSingleChar(/* str */) {
-  throw new Error('Not implemented');
+function findFirstSingleChar(str) {
+  const resultMap = str.split('').reduce((map, s) => (map.has(s) ? map.set(s, map.get(s) + 1) : map.set(s, 1)), new Map());
+  const [find] = Array.from(resultMap.entries())
+    .filter((e) => e[1] === 1);
+  return (find ? find[0] : null);
 }
-
 
 /**
  * Returns the string representation of math interval,
@@ -191,8 +204,12 @@ function findFirstSingleChar(/* str */) {
  *   5, 3, true, true   => '[3, 5]'
  *
  */
-function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
-  throw new Error('Not implemented');
+function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
+  const leftBracket = isStartIncluded ? '[' : '(';
+  const rightBracket = isEndIncluded ? ']' : ')';
+  const firstNum = a >= b ? b : a;
+  const secondNum = firstNum === a ? b : a;
+  return `${leftBracket}${firstNum}, ${secondNum}${rightBracket}`;
 }
 
 
@@ -208,8 +225,8 @@ function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
  * 'rotator' => 'rotator'
  * 'noon' => 'noon'
  */
-function reverseString(/* str */) {
-  throw new Error('Not implemented');
+function reverseString(str) {
+  return str.split('').reverse().join('');
 }
 
 
@@ -225,8 +242,8 @@ function reverseString(/* str */) {
  *   87354 => 45378
  *   34143 => 34143
  */
-function reverseInteger(/* num */) {
-  throw new Error('Not implemented');
+function reverseInteger(num) {
+  return Number(reverseString(String(num)));
 }
 
 
@@ -250,8 +267,25 @@ function reverseInteger(/* num */) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  const ccnStr = String(ccn);
+  let sum = 0;
+
+  for (let i = 0; i < ccnStr.length; i += 1) {
+    let cardNum = Number(ccnStr[i]);
+
+    if ((ccnStr.length - i) % 2 === 0) {
+      cardNum *= 2;
+
+      if (cardNum > 9) {
+        cardNum -= 9;
+      }
+    }
+
+    sum += cardNum;
+  }
+
+  return sum % 10 === 0;
 }
 
 /**
@@ -268,8 +302,16 @@ function isCreditCardNumber(/* ccn */) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
+function getDigitalRoot(num) {
+  const result = String(num).split('')
+    .map((n) => Number(n))
+    .reduce((a, b) => a + b);
+
+  if (result <= 9) {
+    return result;
+  }
+
+  return getDigitalRoot(result);
 }
 
 
@@ -294,8 +336,33 @@ function getDigitalRoot(/* num */) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const openArr = ['[', '(', '{', '<'];
+  const closeArr = [']', ')', '}', '>'];
+  const stack = [];
+  try {
+    str.split('').forEach((e) => {
+      if (openArr.includes(e)) {
+        stack.push(e);
+      } else {
+        const index = closeArr.indexOf(e);
+        const bracketToFind = openArr[index];
+        if (!stack.length) {
+          throw Error('not balanced');
+        }
+        const openBracketFromStack = stack.pop();
+        if (openBracketFromStack !== bracketToFind) {
+          throw Error('not balanced');
+        }
+      }
+    });
+  } catch (e) {
+    return false;
+  }
+  if (stack.length) {
+    return false;
+  }
+  return true;
 }
 
 
@@ -336,9 +403,27 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/webalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const result = '';
+  const [shorten, ...others] = pathes.sort((a, b) => a.length - b.length);
+  console.log(shorten);
+  for (let i = 0; i < shorten.length; i += 1) {
+    const symbol = shorten[i];
+    try {
+      others.forEach((p) => {
+        if (p[i] !== symbol) {
+          throw Error('not match');
+        }
+      });
+    } catch (e) {
+      return result;
+    }
+    result += symbol;
+  }
+  return result;
 }
+
+console.log(getCommonDirectoryPath(['/web/images/image1.png', '/web/images/image2.png']));
 
 
 /**
