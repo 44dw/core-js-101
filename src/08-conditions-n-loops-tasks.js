@@ -406,7 +406,6 @@ function toNaryString(/* num, n */) {
 function getCommonDirectoryPath(pathes) {
   let result = '';
   const [shorten, ...others] = pathes.sort((a, b) => a.length - b.length);
-  console.log(shorten);
   for (let i = 0; i < shorten.length; i += 1) {
     const symbol = shorten[i];
     try {

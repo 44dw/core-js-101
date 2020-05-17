@@ -24,7 +24,7 @@
  *
  */
 function getComposition(f, g) {
-  return function (x) {
+  return function compose(x) {
     return f(g(x));
   };
 }
@@ -46,7 +46,7 @@ function getComposition(f, g) {
  *
  */
 function getPowerFunction(exponent) {
-  return function (base) {
+  return function power(base) {
     return base ** exponent;
   };
 }
@@ -86,7 +86,7 @@ function getPolynom() {
  */
 function memoize(func) {
   let result = null;
-  return function () {
+  return function memo() {
     if (!result) {
       result = func();
     }
@@ -111,11 +111,12 @@ function memoize(func) {
  * retryer() => 2
  */
 function retry(func, attempts) {
-  return function () {
+  return function retr() {
     for (let i = 0; i < attempts; i += 1) {
       try {
         return func();
       } catch (e) {
+        // eslint-disable-next-line
         console.log(e);
       }
     }
@@ -148,7 +149,7 @@ function retry(func, attempts) {
  *
  */
 function logger(func, logFunc) {
-  return function (...args) {
+  return function log(...args) {
     const argsStr = args.map((a) => JSON.stringify(a)).join(',');
     logFunc(`${func.name}(${argsStr}) starts`);
     const result = func(...args);
@@ -172,7 +173,7 @@ function logger(func, logFunc) {
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
 function partialUsingArguments(fn, ...args1) {
-  return function (...args2) {
+  return function part(...args2) {
     return fn(...args1, ...args2);
   };
 }
@@ -197,7 +198,7 @@ function partialUsingArguments(fn, ...args1) {
  */
 function getIdGeneratorFunction(startFrom) {
   let counter = startFrom - 1;
-  return function () {
+  return function gen() {
     counter += 1;
     return counter;
   };
