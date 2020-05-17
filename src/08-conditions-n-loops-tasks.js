@@ -404,7 +404,7 @@ function toNaryString(/* num, n */) {
  *   ['/web/favicon.ico', '/web-scripts/dump', '/webalizer/logs'] => '/'
  */
 function getCommonDirectoryPath(pathes) {
-  const result = '';
+  let result = '';
   const [shorten, ...others] = pathes.sort((a, b) => a.length - b.length);
   console.log(shorten);
   for (let i = 0; i < shorten.length; i += 1) {
@@ -416,15 +416,12 @@ function getCommonDirectoryPath(pathes) {
         }
       });
     } catch (e) {
-      return result;
+      return result.slice(0, result.lastIndexOf('/') + 1);
     }
     result += symbol;
   }
-  return result;
+  return result.slice(0, result.lastIndexOf('/') + 1);
 }
-
-console.log(getCommonDirectoryPath(['/web/images/image1.png', '/web/images/image2.png']));
-
 
 /**
  * Returns the product of two specified matrixes.
